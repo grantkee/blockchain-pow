@@ -1,12 +1,11 @@
 use crate::block::Block;
 use chrono::Utc;
-use hex;
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
 #[derive(Clone, Debug)]
 pub struct App {
-    pub blockchain: Vec<Block>,
+    blockchain: Vec<Block>,
 }
 
 impl App {
@@ -33,7 +32,7 @@ impl App {
         self.blockchain.push(genesis_block);
     }
 
-    pub fn show_blockchain(&self) -> Vec<Block> {
+    pub fn get_blockchain(&self) -> Vec<Block> {
         self.blockchain.clone()
     }
 }

@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::app;
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Block {
     pub id: Uuid,
