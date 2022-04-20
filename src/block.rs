@@ -4,6 +4,7 @@ use uuid::Uuid;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Block {
     pub id: Uuid,
+    pub position: usize,
     pub hash: String,
     pub previous_hash: String,
     pub timestamp: i64,
