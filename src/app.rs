@@ -4,9 +4,9 @@ use log::{error, warn};
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
-const REQUIRED_PREFIX: &str = "000";
+pub const REQUIRED_PREFIX: &str = "000";
 
-async fn hash_to_binary(hash: &[u8]) -> String {
+pub async fn hash_to_binary(hash: &[u8]) -> String {
     std::str::from_utf8(hash).unwrap().to_string()
 }
 
@@ -44,17 +44,19 @@ impl App {
         self.blockchain.clone()
     }
 
-    pub async fn try_add_block(&mut self, block: Block) {
+    pub async fn try_add_block(&mut self, block: Block) -> bool {
         let latest_block = self.blockchain.last().expect("blockchain is empty.");
+        let mut result = false;
         if self.verify_block(&block, latest_block).await {
             self.blockchain.push(block);
+            result = true;
         } else {
             error!("block invalid - cannot add to blockchain");
         }
+        result
     }
 
-    /// verify block checks hash value, proof-of-work, block position, and encoded hash.
-    /// if there are problems verifying, every issue with the block is logged.
+    /// verify block checks hash value, proof-of-work, block position, and encoded hash
     pub async fn verify_block(&self, block: &Block, last_block: &Block) -> bool {
         let mut result = true;
         // check if new block is pointing to the last block in the blockchain
