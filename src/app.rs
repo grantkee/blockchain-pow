@@ -1,4 +1,4 @@
-use crate::block::Block;
+use crate::block::{calc_hash, Block};
 use chrono::Utc;
 use log::{error, warn};
 use sha2::{Digest, Sha256};
@@ -44,7 +44,7 @@ impl App {
         self.blockchain.clone()
     }
 
-    async fn try_add_block(&mut self, block: Block) {
+    pub async fn try_add_block(&mut self, block: Block) {
         let latest_block = self.blockchain.last().expect("blockchain is empty.");
         if self.verify_block(&block, latest_block).await {
             self.blockchain.push(block);
@@ -53,19 +53,52 @@ impl App {
         }
     }
 
-    async fn verify_block(&self, block: &Block, latest_block: &Block) -> bool {
-        let result = false;
+    /// verify block checks hash value, proof-of-work, block position, and encoded hash.
+    /// if there are problems verifying, every issue with the block is logged.
+    pub async fn verify_block(&self, block: &Block, last_block: &Block) -> bool {
+        let mut result = true;
         // check if new block is pointing to the last block in the blockchain
-        if block.previous_hash != latest_block.hash {
+        if block.previous_hash != last_block.hash {
             warn!(
                 "block {} does not have the correct previous hash.",
                 block.id
             );
-        } else if !hash_to_binary(&hex::decode(&block.hash).expect("can't decode hash from hex")).await
+            result = false;
+        }
+
+        // ensure proof-of-work is valid
+        if !hash_to_binary(&hex::decode(&block.hash).expect("can't decode hash from hex"))
+            .await
             .starts_with(REQUIRED_PREFIX)
         {
-            warn!("block {} has an invalid hash prefix", block.id)
+            warn!("block {} has an invalid hash prefix", block.id);
+            result = false;
         }
-        true
+
+        // ensure correct block position
+        if block.position != last_block.position + 1 {
+            warn!(
+                "block {} does not have the correct position: {} compared to the last block, position: {}", block.id, block.position, last_block.position
+            );
+            result = false;
+        }
+
+        // ensure calculated hashes match
+        if hex::encode(
+            calc_hash(
+                block.id,
+                block.position,
+                &block.previous_hash,
+                block.timestamp,
+                &block.data,
+                block.nonce,
+            )
+            .await,
+        ) != block.hash
+        {
+            warn!("block {} has an invalid hash.", block.id);
+            result = false;
+        }
+        result
     }
 }
