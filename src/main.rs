@@ -6,7 +6,8 @@ mod block;
 #[cfg(test)]
 mod tests;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let mut app = app::App::new();
     let _genesis = app.genesis();
     let blockchain_of_one = app.get_blockchain();

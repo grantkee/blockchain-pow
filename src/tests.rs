@@ -1,5 +1,4 @@
 use crate::app::App;
-use crate::block::Block;
 
 async fn create_app() -> App {
     let mut app = App::new();
