@@ -17,7 +17,7 @@ pub async fn hash_to_binary(hash: &[u8]) -> String {
 
 #[derive(Clone, Debug)]
 pub struct App {
-    blockchain: Vec<Block>,
+    pub blockchain: Vec<Block>,
 }
 
 impl App {
@@ -107,5 +107,18 @@ impl App {
             result = false;
         }
         result
+    }
+
+    pub async fn verify_chain(&self, blockchain: &[Block]) -> bool {
+        // skip genesis block
+        for i in 1..blockchain.len() {
+            let first_block = blockchain.get(i - 1).expect("error with first block");
+            let second_block = blockchain.get(i).expect("error with second block");
+            if !self.verify_block(second_block, first_block).await {
+                return false;
+            }
+        }
+
+        true
     }
 }

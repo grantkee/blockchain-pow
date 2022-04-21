@@ -21,7 +21,7 @@ async fn main() {
     hasher.update(b"genesis");
     let prev_hash = hasher.finalize();
 
-    let block = Block::new(
+    let _block = Block::new(
         Uuid::new_v4(),
         1,
         format!("{:X}", prev_hash),
