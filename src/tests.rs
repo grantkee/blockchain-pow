@@ -45,3 +45,20 @@ async fn wrong_previous_hash() {
     let attempt = app.try_add_block(block).await;
     assert!(attempt == false)
 }
+
+#[tokio::test]
+async fn new_block() {
+    // generate hashes
+    let mut hasher = Sha256::new();
+    hasher.update(b"genesis");
+    let prev_hash = hasher.finalize();
+
+    let block = Block::new(
+        Uuid::new_v4(),
+        1,
+        "genesis".to_owned(),
+        "test".to_owned()
+    ).await;
+
+    assert!(block.hash.is_empty() == false);
+}

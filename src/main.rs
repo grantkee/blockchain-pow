@@ -1,5 +1,6 @@
-// use uuid::Uuid;
-// use serde::{Serialize, Deserialize};
+use uuid::Uuid;
+use sha2::{Digest, Sha256};
+use crate::block::Block;
 
 mod app;
 mod block;
@@ -15,4 +16,15 @@ async fn main() {
     for block in blockchain_of_one.await.iter() {
         println!("{:?}", block)
     }
+
+    let mut hasher = Sha256::new();
+    hasher.update(b"genesis");
+    let prev_hash = hasher.finalize();
+
+    let block = Block::new(
+        Uuid::new_v4(),
+        1,
+        format!("{:X}", prev_hash),
+        "test".to_owned()
+    ).await;
 }

@@ -43,6 +43,7 @@ pub async fn mine_block(
             info!("nonce: {}", nonce);
         }
         let hash = calc_hash(id, position, previous_hash, timestamp, data, nonce).await;
+        println!("\n\n &hash - {:?}", &hash);
         let binary_hash = hash_to_binary(&hash).await;
         if binary_hash.starts_with(REQUIRED_PREFIX) {
             info!(
