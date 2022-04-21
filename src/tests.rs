@@ -25,6 +25,33 @@ async fn wrong_previous_hash() {
 
     // generate hashes
     let mut hasher = Sha256::new();
+    hasher.update(b"wrong_hash");
+    let prev_hash = hasher.finalize();
+    let mut hasher2 = Sha256::new();
+    hasher2.update(b"test");
+    let next_hash = hasher2.finalize();
+
+    // create dummy block
+    let block = Block {
+        id: Uuid::new_v4(),
+        position: 1,
+        hash: format!("{:X}", next_hash),
+        previous_hash: format!("{:X}", prev_hash),
+        timestamp: Utc::now().timestamp(),
+        data: "test".to_owned(),
+        nonce: 0,
+    };
+
+    let attempt = app.try_add_block(block).await;
+    assert!(attempt == false)
+}
+
+#[tokio::test]
+async fn wrong_proof_of_work() {
+    let mut app = create_app().await;
+
+    // generate hashes
+    let mut hasher = Sha256::new();
     hasher.update(b"genesis");
     let prev_hash = hasher.finalize();
     let mut hasher2 = Sha256::new();
@@ -45,6 +72,7 @@ async fn wrong_previous_hash() {
     let attempt = app.try_add_block(block).await;
     assert!(attempt == false)
 }
+
 
 #[tokio::test]
 async fn new_block() {

@@ -13,30 +13,6 @@ pub async fn hash_to_binary(hash: &[u8]) -> String {
     }
     
     binary
-    
-    //Debugging notes below. Above this line is the refactoring that works.
-    //
-    // println!("\nhash_to_binary()");
-    // println!("r: {:?}\n", r); // r is the variable labeled "binary" above. This print would have been on line 15.
-    // println!("std::str::from_utf8: {:?}\n", std::str::from_utf8(hash));
-    // let res = match std::str::from_utf8(&hash) {
-    //     Ok(slice) => slice,
-    //     Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
-    // };
-    
-    // res.to_string()
-
-    // Below is the output in the terminal.
-    // 
-    // note: this println came from mine_block() line 46.
-    // &hash - [68, 208, 187, 236, 128, 31, 237, 19, 101, 200, 108, 218, 40, 14, 245, 218, 202, 122, 113, 12, 46, 45, 153, 239, 170, 143, 114, 216, 239, 98, 238, 62]
-
-    // hash_to_binary()
-    // r: "10001001101000010111011111011001000000011111111011011001111001011100100011011001101101010100011101111010111011010110010101111010111000111001011101011011001100111101111101010101000111111100101101100011101111110001011101110111110"
-    
-    // std::str::from_utf8: Err(Utf8Error { valid_up_to: 3, error_len: Some(2) })
-    
-    // thread 'main' panicked at 'Invalid UTF-8 sequence: invalid utf-8 sequence of 2 bytes from index 3', src/app.rs:20:19
 }
 
 #[derive(Clone, Debug)]
